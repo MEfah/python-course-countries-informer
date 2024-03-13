@@ -30,7 +30,13 @@ def get_city(request: Request, name: str) -> JsonResponse:
     :return:
     """
 
-    if cities := CityService().get_cities(name):
+    offset = request.query_params.get('offset')
+    offset = int(offset) if offset is not None and offset.isdigit() else 0
+    
+    count = request.query_params.get('count')
+    count = int(count) if count is not None and count.isdigit() else 10
+
+    if cities := CityService().get_cities(name, offset, count):
         serializer = CitySerializer(cities, many=True)
 
         return JsonResponse(serializer.data, safe=False)
@@ -85,7 +91,13 @@ def get_country(request: Request, name: str) -> JsonResponse:
     :return:
     """
 
-    if countries := CountryService().get_countries(name):
+    offset = request.query_params.get('offset')
+    offset = int(offset) if offset is not None and offset.isdigit() else 0
+    
+    count = request.query_params.get('count')
+    count = int(count) if count is not None and count.isdigit() else 10
+
+    if countries := CountryService().get_countries(name, offset, count):
         serializer = CountrySerializer(countries, many=True)
 
         return JsonResponse(serializer.data, safe=False)

@@ -97,9 +97,6 @@ class CurrencySerializer(serializers.ModelSerializer):
             "rates",
         ]
     
-a = 1
+a = "asdf"
 
-if a := None:
-    print("1")
-
-print(a)
+print(a[1:3])

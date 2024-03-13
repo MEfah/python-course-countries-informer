@@ -18,7 +18,7 @@ class CityService:
     def __init__(self) -> None:
         self.geo_client = GeoClient()
 
-    def get_cities(self, name: str) -> QuerySet[City]:
+    def get_cities(self, name: str, offset: int = 0, count: int = 10) -> QuerySet[City]:
         """
         Получение списка городов по названию.
 
@@ -26,9 +26,12 @@ class CityService:
         :return:
         """
 
+        if offset < 0 or count <= 0:
+            raise ValueError()
+
         cities_db = City.objects.prefetch_related("country").filter(
             Q(name__iregex=name) | Q(region__iregex=name)
-        )
+        ).order_by('name')[offset:offset+count]
         if not cities_db:
             if cities_api := self.geo_client.get_cities(name):
                 # если города в базе нет, то нужно его создать
@@ -69,7 +72,7 @@ class CityService:
                     # поиск нужной страны в БД после импорта новых городов
                     cities_db = City.objects.prefetch_related("country").filter(
                         Q(name__iregex=name) | Q(region__iregex=name)
-                    )
+                    ).order_by('name')[offset:offset+count]
 
         return cities_db
 

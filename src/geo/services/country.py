@@ -13,17 +13,21 @@ class CountryService:
     Сервис для работы с данными о странах.
     """
 
-    def get_countries(self, name: str) -> QuerySet[Country]:
+    def get_countries(self, name: str, offset: int = 0, count: int = 10) -> QuerySet[Country]:
         """
         Получение списка стран по названию.
 
         :param name: Название страны
         :return:
         """
+        
+        if offset < 0 or count <= 0:
+            raise ValueError()
 
         countries = Country.objects.filter(
             Q(name__iregex=name) | Q(demonym__iregex=name)
-        )
+        ).order_by('name')[offset:offset+count]
+        print(countries)
         if not countries:
             # если страна не найдена в БД, то – поиск в API и сохранение в БД
             if countries_data := GeoClient().get_countries(name):
@@ -34,7 +38,7 @@ class CountryService:
                 # поиск нужной страны в БД после импорта новых стран
                 countries = Country.objects.filter(
                     Q(name__iregex=name) | Q(demonym__iregex=name)
-                )
+                ).order_by('name')[offset:offset+count]
 
         return countries
 
