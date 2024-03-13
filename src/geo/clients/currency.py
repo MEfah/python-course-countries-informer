@@ -8,8 +8,8 @@ from typing import Optional
 import httpx
 
 from app.settings import REQUESTS_TIMEOUT
-from src.base.clients.base import BaseClient
-from src.geo.clients.shemas import CurrencyRatesDTO
+from base.clients.base import BaseClient
+from geo.clients.shemas import CurrencyRatesDTO
 
 
 class CurrencyClient(BaseClient):

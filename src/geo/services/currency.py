@@ -4,12 +4,12 @@ from geo.clients.shemas import CurrencyRatesDTO
 from geo.clients.currency import CurrencyClient
 
 
-class WeatherService:
+class CurrencyService:
     """
     Сервис для работы с данными о погоде.
     """
 
-    def get_rub_rates(self) -> Optional[dict]:
+    def get_rub_rates(self) -> Optional[CurrencyRatesDTO]:
         """
         Получение курсов валют относительно рубля
 
@@ -24,12 +24,12 @@ class WeatherService:
         return None
     
     def convert_rates(self, rates_info: CurrencyRatesDTO, currency: str) -> Optional[CurrencyRatesDTO]:
-        if currency == rates_info["base"]:
+        if currency == rates_info.base:
             return rates_info
         
-        rates = rates_info["rates"]
+        rates = rates_info.rates
         
-        if currency in rates_info["rates"]:
+        if currency in rates_info.rates:
             rate = rates[currency]
             rates = { c: v / rate for c, v in rates.items() }
             rates["RUB"] = 1 / rate
@@ -37,7 +37,7 @@ class WeatherService:
             
             return CurrencyRatesDTO(
                 base=currency,
-                date=rates_info["date"],
+                date=rates_info.date,
                 rates=rates
             )
         

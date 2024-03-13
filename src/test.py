@@ -3,7 +3,7 @@ from typing import Optional
 
 import httpx
 
-from app.settings import REQUESTS_TIMEOUT
+from rest_framework import serializers
 from base.clients.base import BaseClient
 from geo.clients.shemas import CurrencyRatesDTO
 
@@ -16,7 +16,7 @@ class CurrencyClient(BaseClient):
         return "https://www.cbr-xml-daily.ru/latest.js"
 
     def _request(self, endpoint: str) -> Optional[dict]:
-        with httpx.Client(timeout=REQUESTS_TIMEOUT) as client:
+        with httpx.Client(timeout=30) as client:
             # получение ответа
             response = client.get(endpoint)
             if response.status_code == HTTPStatus.OK:
@@ -24,7 +24,7 @@ class CurrencyClient(BaseClient):
 
             return None
 
-    def get_currency_rates(self, currency: str) -> Optional[dict]:
+    def get_currency_rates(self) -> Optional[CurrencyRatesDTO]:
         """
         Получение данных о курсах валют.
 
@@ -33,29 +33,73 @@ class CurrencyClient(BaseClient):
         """
         
         if response := self._request(self.get_base_url()):
-            item = response
-            rates = item["rates"]
-            currency = currency.upper()
-
-            if currency == "RUB":
-                return CurrencyRatesDTO(
-                    base=currency,
-                    date=item["date"],
-                    rates=rates
-                )
+            ratesDTO = CurrencyRatesDTO(
+                base=response["base"],
+                date=response["date"],
+                rates=response["rates"]
+            )
             
-            elif currency in rates:
-                rate = rates[currency]
-                rates = { c: v / rate for c, v in rates.items() }
-                rates["RUB"] = 1 / rate
-                rates.pop(currency)
-                
-                ratesDTO = CurrencyRatesDTO(
-                    base=currency,
-                    date=item["date"],
-                    rates=rates
-                )
-                
-                return ratesDTO
+            return ratesDTO
 
         return None
+    
+    
+class CurrencyService:
+    """
+    Сервис для работы с данными о погоде.
+    """
+
+    def get_rub_rates(self) -> Optional[CurrencyRatesDTO]:
+        """
+        Получение курсов валют относительно рубля
+
+        :param alpha2code: ISO Alpha2 код страны
+        :param city: Город
+        :return:
+        """
+
+        if data := CurrencyClient().get_currency_rates():
+            return data
+
+        return None
+    
+    def convert_rates(self, rates_info: CurrencyRatesDTO, currency: str) -> Optional[CurrencyRatesDTO]:
+        if currency == rates_info.base:
+            return rates_info
+        
+        rates = rates_info.rates
+        
+        if currency in rates_info.rates:
+            rate = rates[currency]
+            rates = { c: v / rate for c, v in rates.items() }
+            rates["RUB"] = 1 / rate
+            rates.pop(currency)
+            
+            return CurrencyRatesDTO(
+                base=currency,
+                date=rates_info.date,
+                rates=rates
+            )
+        
+        return None
+    
+    
+class CurrencySerializer(serializers.ModelSerializer):
+    """
+    Сериализатор курсов валют
+    """
+    
+    class Meta:
+        model = CurrencyRatesDTO
+        fields = [
+            "base",
+            "date",
+            "rates",
+        ]
+    
+a = 1
+
+if a := None:
+    print("1")
+
+print(a)
