@@ -59,6 +59,3 @@ class CurrencyClient(BaseClient):
                 return ratesDTO
 
         return None
-    
-    
-print(CurrencyClient().get_currency_rates("RUB"))
