@@ -50,6 +50,23 @@ class CitySerializer(serializers.ModelSerializer):
         ]
 
 
+class WeatherSerializer(serializers.Serializer):
+    """
+    Сериализатор погоды
+    
+    temp: float
+    pressure: int
+    humidity: int
+    wind_speed: float
+    description: str
+    """
+    temp = serializers.FloatField()
+    pressure = serializers.IntegerField()
+    humidity = serializers.IntegerField()
+    wind_speed = serializers.FloatField()
+    description = serializers.CharField()
+
+
 class CurrencySerializer(serializers.Serializer):
     """
     Сериализатор курсов валют
