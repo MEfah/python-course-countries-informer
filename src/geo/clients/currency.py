@@ -47,39 +47,3 @@ class CurrencyClient(BaseClient):
             return ratesDTO
 
         return None
-
-    # def get_currency_rates(self, currency: str) -> Optional[dict]:
-    #     """
-    #     Получение данных о курсах валют.
-
-    #     :param name: Название страны
-    #     :return:
-    #     """
-        
-    #     if response := self._request(self.get_base_url()):
-    #         item = response
-    #         rates = item["rates"]
-    #         currency = currency.upper()
-
-    #         if currency == "RUB":
-    #             return CurrencyRatesDTO(
-    #                 base=currency,
-    #                 date=item["date"],
-    #                 rates=rates
-    #             )
-            
-    #         elif currency in rates:
-    #             rate = rates[currency]
-    #             rates = { c: v / rate for c, v in rates.items() }
-    #             rates["RUB"] = 1 / rate
-    #             rates.pop(currency)
-                
-    #             ratesDTO = CurrencyRatesDTO(
-    #                 base=currency,
-    #                 date=item["date"],
-    #                 rates=rates
-    #             )
-                
-    #             return ratesDTO
-
-    #     return None

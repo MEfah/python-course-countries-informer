@@ -154,11 +154,9 @@ def get_currency(request: Request, currency: str) -> None:
     currency = currency.upper()
     data = caches[CACHE_CURRENCY].get(currency)
     if not data:
-        print("CURRENCY_NO_CACHE_" + currency)
         data = caches[CACHE_CURRENCY].get("RUB")
         
         if not data:
-            print("CURRENCY_NO_CACHE_RUB")
             if data := CurrencyService().get_rub_rates():
                 caches[CACHE_CURRENCY].set("RUB", data)
                 if data := CurrencyService().convert_rates(data, currency):
