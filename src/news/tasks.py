@@ -32,7 +32,7 @@ def import_news() -> None:
 
     for country_code, country_pk in codes.items():
         # запрос новостной ленты для страны
-        news = news_service.get_news(country_code)
+        news = news_service.get_api_news(country_code)
         if not news:
             logger.info("No news found for '%s'.", country_code)
             continue

@@ -8,10 +8,12 @@ from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.request import Request
 
 from news.services.news import NewsService
+from news.serializers import NewsSerializer
+
 
 
 @api_view(["GET"])
-def get_city(request: Request, alpha2code: str) -> JsonResponse:
+def get_news(request: Request, alpha2code: str) -> JsonResponse:
     """
     Получить новости
 
@@ -20,15 +22,9 @@ def get_city(request: Request, alpha2code: str) -> JsonResponse:
     :return:
     """
 
-    offset = request.query_params.get('offset')
-    offset = int(offset) if offset is not None and offset.isdigit() else 0
-    
-    count = request.query_params.get('count')
-    count = int(count) if count is not None and count.isdigit() else 10
+    news_service = NewsService()
 
-    if cities := CityService().get_cities(name, offset, count):
-        serializer = CitySerializer(cities, many=True)
-
-        return JsonResponse(serializer.data, safe=False)
+    if news := news_service.get_news(alpha2code):
+        return JsonResponse(NewsSerializer(news, many=True).data, safe=False)
 
     raise NotFound
