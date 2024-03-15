@@ -11,7 +11,6 @@ from news.services.news import NewsService
 from news.serializers import NewsSerializer
 
 
-
 @api_view(["GET"])
 def get_news(request: Request, alpha2code: str) -> JsonResponse:
     """

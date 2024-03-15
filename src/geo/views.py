@@ -30,10 +30,10 @@ def get_city(request: Request, name: str) -> JsonResponse:
     :return:
     """
 
-    offset = request.query_params.get('offset')
+    offset = request.query_params.get("offset")
     offset = int(offset) if offset is not None and offset.isdigit() else 0
-    
-    count = request.query_params.get('count')
+
+    count = request.query_params.get("count")
     count = int(count) if count is not None and count.isdigit() else 10
 
     if cities := CityService().get_cities(name, offset, count):
@@ -91,10 +91,10 @@ def get_country(request: Request, name: str) -> JsonResponse:
     :return:
     """
 
-    offset = request.query_params.get('offset')
+    offset = request.query_params.get("offset")
     offset = int(offset) if offset is not None and offset.isdigit() else 0
-    
-    count = request.query_params.get('count')
+
+    count = request.query_params.get("count")
     count = int(count) if count is not None and count.isdigit() else 10
 
     if countries := CountryService().get_countries(name, offset, count):
@@ -167,13 +167,13 @@ def get_currency(request: Request, currency: str) -> None:
     data = caches[CACHE_CURRENCY].get(currency)
     if not data:
         data = caches[CACHE_CURRENCY].get("RUB")
-        
+
         if not data:
             if data := CurrencyService().get_rub_rates():
                 caches[CACHE_CURRENCY].set("RUB", data)
                 if data := CurrencyService().convert_rates(data, currency):
                     caches[CACHE_CURRENCY].set(currency, data)
-                
+
         elif data := CurrencyService().convert_rates(data, currency):
             caches[CACHE_CURRENCY].set(currency, data)
 

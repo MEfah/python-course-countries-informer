@@ -36,14 +36,12 @@ class CurrencyClient(BaseClient):
         :param name: Название страны
         :return:
         """
-        
+
         if response := self._request(self.get_base_url()):
             ratesDTO = CurrencyRatesDTO(
-                base=response["base"],
-                date=response["date"],
-                rates=response["rates"]
+                base=response["base"], date=response["date"], rates=response["rates"]
             )
-            
+
             return ratesDTO
 
         return None

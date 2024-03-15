@@ -2,10 +2,11 @@ from http import HTTPStatus
 from typing import Optional
 
 import httpx
-
 from rest_framework import serializers
+
 from base.clients.base import BaseClient
 from geo.clients.shemas import CurrencyRatesDTO
+
 
 class CurrencyClient(BaseClient):
     """
@@ -31,19 +32,17 @@ class CurrencyClient(BaseClient):
         :param name: Название страны
         :return:
         """
-        
+
         if response := self._request(self.get_base_url()):
             ratesDTO = CurrencyRatesDTO(
-                base=response["base"],
-                date=response["date"],
-                rates=response["rates"]
+                base=response["base"], date=response["date"], rates=response["rates"]
             )
-            
+
             return ratesDTO
 
         return None
-    
-    
+
+
 class CurrencyService:
     """
     Сервис для работы с данными о погоде.
@@ -62,33 +61,31 @@ class CurrencyService:
             return data
 
         return None
-    
-    def convert_rates(self, rates_info: CurrencyRatesDTO, currency: str) -> Optional[CurrencyRatesDTO]:
+
+    def convert_rates(
+        self, rates_info: CurrencyRatesDTO, currency: str
+    ) -> Optional[CurrencyRatesDTO]:
         if currency == rates_info.base:
             return rates_info
-        
+
         rates = rates_info.rates
-        
+
         if currency in rates_info.rates:
             rate = rates[currency]
-            rates = { c: v / rate for c, v in rates.items() }
+            rates = {c: v / rate for c, v in rates.items()}
             rates["RUB"] = 1 / rate
             rates.pop(currency)
-            
-            return CurrencyRatesDTO(
-                base=currency,
-                date=rates_info.date,
-                rates=rates
-            )
-        
+
+            return CurrencyRatesDTO(base=currency, date=rates_info.date, rates=rates)
+
         return None
-    
-    
+
+
 class CurrencySerializer(serializers.ModelSerializer):
     """
     Сериализатор курсов валют
     """
-    
+
     class Meta:
         model = CurrencyRatesDTO
         fields = [
@@ -96,7 +93,8 @@ class CurrencySerializer(serializers.ModelSerializer):
             "date",
             "rates",
         ]
-    
+
+
 a = "asdf"
 
 print(a[1:3])

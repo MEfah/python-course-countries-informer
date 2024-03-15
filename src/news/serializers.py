@@ -8,7 +8,7 @@ class NewsSerializer(serializers.Serializer):
     """
     Сериализатор новостей
     """
-    
+
     source = serializers.CharField()
     author = serializers.CharField()
     title = serializers.CharField()

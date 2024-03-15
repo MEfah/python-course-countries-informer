@@ -11,6 +11,7 @@ from typing import Optional, Dict
 from django.db.models import Q, QuerySet
 from django.db.models.functions import Lower
 
+
 class NewsService:
     """
     Сервис для работы с данными о новостях.
@@ -28,12 +29,12 @@ class NewsService:
 
         if countries:
             news = self._get_news_from_db(countries[0].pk)
-        
+
         if not news:
             news = self.get_api_news(country_code)
 
         return news
-    
+
     def get_api_news(self, country_code: str) -> Optional[list[NewsItemDTO]]:
         """
         Получение актуальных новостей по коду страны.
@@ -41,7 +42,7 @@ class NewsService:
         :param str country_code: ISO Alpha2 код страны
         :return:
         """
-        
+
         return NewsClient().get_news(country_code)
 
     def save_news(self, country_pk: int, news: list[NewsItemDTO]) -> None:
@@ -85,23 +86,23 @@ class NewsService:
         :param str country_id: Идентификатор страны в БД
         :return:
         """
-        news_set = News.objects.filter(
-            Q(country=country_id)
-        )
-        
+        news_set = News.objects.filter(Q(country=country_id))
+
         if not news_set:
             return None
-        
+
         news_dtos = []
-        
+
         for news in news_set:
-            news_dtos.append(NewsItemDTO(
-                source=news.source,
-                author=news.author,
-                title=news.title,
-                description=news.description,
-                url=news.url,
-                published_at=news.published_at,
-            ))
-        
+            news_dtos.append(
+                NewsItemDTO(
+                    source=news.source,
+                    author=news.author,
+                    title=news.title,
+                    description=news.description,
+                    url=news.url,
+                    published_at=news.published_at,
+                )
+            )
+
         return news_dtos
