@@ -18,7 +18,7 @@ lint:
 
 # запуск автоматических тестов
 test:
-	docker compose run countries-informer-app ./manage.py test
+	docker compose run countries-informer-app python ./manage.py test
 
 # запуск всех функций поддержки качества кода
 all: format lint test
