@@ -14,7 +14,7 @@ Install the appropriate software:
 
 Clone the repository to your computer:
 ```bash
-git clone https://github.com/mnv/python-course-country-directory.git
+git clone https://github.com/MEfah/python-course-countries-informer.git
 ```
 
 ## Usage
@@ -31,10 +31,12 @@ git clone https://github.com/mnv/python-course-country-directory.git
     To access the API, visit the appropriate resources and obtain an access token:
     - APILayer – Geography API (https://apilayer.com/marketplace/geo-api)
     - OpenWeather – Weather Free Plan (https://openweathermap.org/price#weather)
+    - NewsAPI - News API (https://newsapi.org/register)
    
     Set received access tokens as environment variable values (in `.env` file):
     - `API_KEY_APILAYER` – for APILayer access token
     - `API_KEY_OPENWEATHER` – for OpenWeather access token
+    - `API_KEY_NEWSAPI` - for NewsAPI access token
 
 2. Build the container using Docker Compose:
     ```shell
@@ -45,7 +47,7 @@ git clone https://github.com/mnv/python-course-country-directory.git
    
 3. To start the application run:
     ```shell
-    docker compose up cron
+    docker compose up
     ```
    
     To get data you can use following API endpoints:
