@@ -42,7 +42,7 @@ git clone https://github.com/MEfah/python-course-countries-informer.git
     ```shell
     docker compose build
     ```
-    This command should be run from the root directory where `Dockerfile` is located.
+    This command should be run from the root directory where `docker-compoose.yaml` is located.
     You also need to build the docker container again in case if you have updated `requirements.txt`.
    
 3. To start the application run:
@@ -62,9 +62,9 @@ git clone https://github.com/MEfah/python-course-countries-informer.git
 
     Create super user to work with admin panel:
 
-    .. code-block:: console
-
-        docker compose exec countries-informer-app python manage.py createsuperuser
+    ```
+    docker compose exec countries-informer-app python manage.py createsuperuser
+    ```
 
     You can access admin panel by this URL: http://localhost:8020/admin/
 
@@ -91,7 +91,15 @@ The project contains a special `Makefile` that provides shortcuts for a set of c
     make lint
     ```
 
-5. Run autoformat, linters and tests in one command:
+5. Autotests:
+    ```shell
+    make test
+    ```
+
+    The test coverage report will be located at `src/htmlcov/index.html`. 
+    So you can estimate the quality of automated test coverage.
+
+6. Run autoformat, linters and tests in one command:
     ```shell
     make all
     ```
