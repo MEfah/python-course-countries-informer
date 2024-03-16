@@ -8,12 +8,13 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.request import Request
 
-from app.settings import CACHE_WEATHER
-from geo.serializers import CountrySerializer, CitySerializer
+from app.settings import CACHE_WEATHER, CACHE_CURRENCY
+from geo.serializers import CountrySerializer, CitySerializer, CurrencySerializer
 from geo.services.city import CityService
 from geo.services.country import CountryService
 from geo.services.shemas import CountryCityDTO
 from geo.services.weather import WeatherService
+from geo.services.currency import CurrencyService
 
 
 @api_view(["GET"])
@@ -29,7 +30,13 @@ def get_city(request: Request, name: str) -> JsonResponse:
     :return:
     """
 
-    if cities := CityService().get_cities(name):
+    offset = request.query_params.get("offset")
+    offset = int(offset) if offset is not None and offset.isdigit() else 0
+
+    count = request.query_params.get("count")
+    count = int(count) if count is not None and count.isdigit() else 10
+
+    if cities := CityService().get_cities(name, offset, count):
         serializer = CitySerializer(cities, many=True)
 
         return JsonResponse(serializer.data, safe=False)
@@ -84,7 +91,13 @@ def get_country(request: Request, name: str) -> JsonResponse:
     :return:
     """
 
-    if countries := CountryService().get_countries(name):
+    offset = request.query_params.get("offset")
+    offset = int(offset) if offset is not None and offset.isdigit() else 0
+
+    count = request.query_params.get("count")
+    count = int(count) if count is not None and count.isdigit() else 10
+
+    if countries := CountryService().get_countries(name, offset, count):
         serializer = CountrySerializer(countries, many=True)
 
         return JsonResponse(serializer.data, safe=False)
@@ -142,5 +155,29 @@ def get_weather(request: Request, alpha2code: str, city: str) -> JsonResponse:
 
 
 @api_view(["GET"])
-def get_currency(*args: Any, **kwargs: Any) -> None:
-    pass
+def get_currency(request: Request, currency: str) -> None:
+    """
+    Получение информации о курсах валют.
+
+    :param Request request: Объект запроса
+    :param str currency: ISO 4217 буквенный код валюты
+    :return:
+    """
+    currency = currency.upper()
+    data = caches[CACHE_CURRENCY].get(currency)
+    if not data:
+        data = caches[CACHE_CURRENCY].get("RUB")
+
+        if not data:
+            if data := CurrencyService().get_rub_rates():
+                caches[CACHE_CURRENCY].set("RUB", data)
+                if data := CurrencyService().convert_rates(data, currency):
+                    caches[CACHE_CURRENCY].set(currency, data)
+
+        elif data := CurrencyService().convert_rates(data, currency):
+            caches[CACHE_CURRENCY].set(currency, data)
+
+    if data:
+        return JsonResponse(CurrencySerializer(data).data, safe=False)
+
+    raise NotFound

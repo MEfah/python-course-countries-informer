@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from geo.models import Country, City
+from geo.clients.shemas import CurrencyRatesDTO
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -47,3 +48,31 @@ class CitySerializer(serializers.ModelSerializer):
             "longitude",
             "country",
         ]
+
+
+class WeatherSerializer(serializers.Serializer):
+    """
+    Сериализатор погоды
+
+    temp: float
+    pressure: int
+    humidity: int
+    wind_speed: float
+    description: str
+    """
+
+    temp = serializers.FloatField()
+    pressure = serializers.IntegerField()
+    humidity = serializers.IntegerField()
+    wind_speed = serializers.FloatField()
+    description = serializers.CharField()
+
+
+class CurrencySerializer(serializers.Serializer):
+    """
+    Сериализатор курсов валют
+    """
+
+    base = serializers.CharField()
+    date = serializers.CharField()
+    rates = serializers.DictField()
